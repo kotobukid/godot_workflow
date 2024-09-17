@@ -1,0 +1,4 @@
+.idea
+
+*.blend
+*.blend[0-9]*
