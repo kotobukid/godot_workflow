@@ -7,10 +7,10 @@ bl_info = {
     "description": "Support workflow for Godot Engine",
 }
 
-
 import bpy
 from bpy.types import Panel, Operator
 from bpy.props import StringProperty
+
 
 class ExportCustomPattern(bpy.types.Operator):
     bl_idname = "export.custom_pattern"
@@ -142,8 +142,9 @@ def unregister():
     bpy.utils.unregister_class(OBJECT_OT_make_colonly)
     bpy.utils.unregister_class(OBJECT_PT_godot_workflow_panel)
 
+
 # file_type = "GLB" # "GLB"
-file_type = "GLTF_SEPARATE" # "GLB"
+file_type = "GLTF_SEPARATE"  # "GLB"
 
 
 def export_pattern1(filename):
@@ -257,7 +258,3 @@ def export_pattern1(filename):
 
 if __name__ == "__main__":
     register()
-
-
-
-
