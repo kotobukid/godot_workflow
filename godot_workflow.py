@@ -90,7 +90,7 @@ class OBJECT_OT_set_export_target(bpy.types.Operator):
 
 class OBJECT_OT_make_colonly(bpy.types.Operator):
     bl_idname = "object.make_colonly"
-    bl_label = "Make colonly"
+    bl_label = "Toggle '-colonly'"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -121,7 +121,7 @@ class OBJECT_PT_godot_workflow_panel(bpy.types.Panel):
         layout.operator("object.set_export_target")
         layout.operator("object.make_colonly")
 
-        layout.operator("wm.file_selector", text="Choose File")
+        layout.operator("wm.file_selector", text="Set filename to export")
         layout.operator("export.custom_pattern")
 
 
