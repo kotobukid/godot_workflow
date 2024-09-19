@@ -19,8 +19,29 @@ class ExportCustomPattern(bpy.types.Operator):
 
     def execute(self, context):
         filepath = bpy.data.scenes["Scene"]["export_file_path"]
+
+        revert_to_select = []
+        revert_to_deselect = []
+
         if filepath:
+            for obj in bpy.data.objects:
+                if obj['export target']:
+                    if not obj.select_get():
+                        revert_to_deselect.append(obj.name)
+
+                    obj.select_set(True)
+
+                else:
+                    if obj.select_get():
+                        revert_to_select.append(obj.name)
+
+                    obj.select_set(False)
             export_pattern1(filepath)
+
+            for name in revert_to_deselect:
+                bpy.data.objects[name].select_set(False)
+            for name in revert_to_select:
+                bpy.data.objects[name].select_set(True)
         else:
             pass
         return {'FINISHED'}
@@ -55,7 +76,6 @@ class OBJECT_OT_set_export_target(bpy.types.Operator):
         objects = bpy.data.objects
 
         for o in objects:
-            print(o)
             if 'export target' in o:
                 pass
             else:
