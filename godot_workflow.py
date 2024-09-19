@@ -13,8 +13,9 @@ from bpy.props import StringProperty
 
 
 class ExportCustomPattern(bpy.types.Operator):
+    """Export as GLTF format"""
     bl_idname = "export.custom_pattern"
-    bl_label = "Export gltf"
+    bl_label = "Export GLTF"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -48,6 +49,7 @@ class ExportCustomPattern(bpy.types.Operator):
 
 
 class SimpleFileBrowserOperator(Operator):
+    """Set filename to export on clicking 'Export GLTF' button"""
     bl_idname = "wm.file_selector"
     bl_label = "Select File"
 
@@ -65,7 +67,7 @@ class SimpleFileBrowserOperator(Operator):
 
 
 class OBJECT_OT_set_export_target(bpy.types.Operator):
-    """Tooltip for the operator"""
+    """Set 'export target' custom property to every object"""
     bl_idname = "object.set_export_target"
     bl_label = "Initialize for Godot ready"
     bl_options = {'REGISTER', 'UNDO'}
@@ -89,6 +91,7 @@ class OBJECT_OT_set_export_target(bpy.types.Operator):
 
 
 class OBJECT_OT_make_colonly(bpy.types.Operator):
+    """Mark current object as CollisionShape on imported by Godot"""
     bl_idname = "object.make_colonly"
     bl_label = "Toggle '-colonly'"
     bl_options = {'REGISTER', 'UNDO'}
