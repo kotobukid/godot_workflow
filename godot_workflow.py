@@ -74,7 +74,7 @@ class SimpleFileBrowserOperator(Operator):
 class CustomPropChecker(Operator):
     """Open Scene property panel"""
     bl_idname = "wm.open_scene_panel"
-    bl_label = "Scene"
+    bl_label = "Open Scene Panel"
 
     def execute(self, context):
         check_properties_editor_and_open_custom_properties()
