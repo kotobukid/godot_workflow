@@ -71,6 +71,17 @@ class SimpleFileBrowserOperator(Operator):
         return {'RUNNING_MODAL'}
 
 
+class CustomPropChecker(Operator):
+    """Open Scene property panel"""
+    bl_idname = "wm.open_scene_panel"
+    bl_label = "Scene"
+
+    def execute(self, context):
+        check_properties_editor_and_open_custom_properties()
+
+        return {'FINISHED'}
+
+
 class OBJECT_OT_set_export_target(bpy.types.Operator):
     """Set 'export target' custom property to every object"""
     bl_idname = "object.set_export_target"
@@ -125,18 +136,31 @@ class OBJECT_PT_godot_workflow_panel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        # ボタンを作成し、押したときにsample_operatorを呼び出す
-        layout.operator("object.set_export_target")
-        layout.operator("object.make_colonly")
+        col = layout.column(align=True)
 
-        layout.operator("wm.file_selector", text="Set filename to export")
-        layout.operator("export.custom_pattern")
+        row = col.row(align=True)
+        # ボタンを作成し、押したときにsample_operatorを呼び出す
+        row.operator("object.set_export_target")
+
+        row = col.row(align=True)
+        row.operator("object.make_colonly")
+
+        row = col.row()
+        row.label(text="Export file path:")
+
+        row = col.row(align=True)
+        row.operator("wm.file_selector", text="Set filename")
+        row.operator("wm.open_scene_panel", text="Check")
+
+        row = col.row(align=False)
+        row.operator("export.custom_pattern", icon="EXPORT")
 
 
 # アドオンの登録
 def register():
     bpy.utils.register_class(ExportCustomPattern)
     bpy.utils.register_class(SimpleFileBrowserOperator)
+    bpy.utils.register_class(CustomPropChecker)
     bpy.utils.register_class(OBJECT_OT_set_export_target)
     bpy.utils.register_class(OBJECT_OT_make_colonly)
     bpy.utils.register_class(OBJECT_PT_godot_workflow_panel)
@@ -146,6 +170,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ExportCustomPattern)
     bpy.utils.unregister_class(SimpleFileBrowserOperator)
+    bpy.utils.unregister_class(CustomPropChecker)
     bpy.utils.unregister_class(OBJECT_OT_set_export_target)
     bpy.utils.unregister_class(OBJECT_OT_make_colonly)
     bpy.utils.unregister_class(OBJECT_PT_godot_workflow_panel)
@@ -262,6 +287,42 @@ def export_pattern1(filename):
         export_extra_animations=False,
         filter_glob="*.glb"
     )
+
+
+def check_properties_editor_and_open_custom_properties():
+    # 現在のワークスペースを取得
+    current_workspace = bpy.context.workspace
+
+    # Propertiesエディタを探す
+    properties_area = None
+    for area in current_workspace.screens[0].areas:
+        if area.type == 'PROPERTIES':
+            properties_area = area
+            break
+
+    if properties_area:
+        print("Propertiesエディタが見つかりました。")
+
+        # Propertiesエディタのスペースを取得
+        properties_space = properties_area.spaces[0]
+
+        # SceneプロパティタブのIDを取得
+        scene_context = None
+        context = properties_space.context
+        if context == 'SCENE':
+            scene_context = context
+        else:
+            properties_space.context = 'SCENE'
+
+        # カスタムプロパティパネルを探す
+        custom_props_panel = None
+        for panel in bpy.types.SCENE_PT_custom_props.bl_rna.properties:
+            if panel.identifier == 'custom_data':
+                custom_props_panel = panel
+                break
+        print("sceneプロパティパネルを開きました。")
+    else:
+        print("Propertiesエディタが現在のワークスペースに見つかりませんでした。")
 
 
 if __name__ == "__main__":
