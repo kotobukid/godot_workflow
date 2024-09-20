@@ -19,12 +19,16 @@ class ExportCustomPattern(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        filepath = bpy.data.scenes["Scene"]["export_file_path"]
+        if "export_file_path" in bpy.data.scenes["Scene"]:
+            filepath = bpy.data.scenes["Scene"]["export_file_path"]
+        else:
+            self.report({'ERROR'}, 'export file path not set')
+            return {'CANCELLED'}
 
         revert_to_select = []
         revert_to_deselect = []
 
-        if filepath:
+        try:
             for obj in bpy.data.objects:
                 if obj['export target']:
                     if not obj.select_get():
@@ -43,8 +47,9 @@ class ExportCustomPattern(bpy.types.Operator):
                 bpy.data.objects[name].select_set(False)
             for name in revert_to_select:
                 bpy.data.objects[name].select_set(True)
-        else:
-            pass
+        except Exception as e:
+            self.report({'ERROR'}, str(e))
+
         return {'FINISHED'}
 
 
