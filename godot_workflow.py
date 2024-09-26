@@ -14,6 +14,7 @@ from bpy.props import StringProperty
 
 class ExportCustomPattern(bpy.types.Operator):
     """Export as GLTF format"""
+
     bl_idname = "export.custom_pattern"
     bl_label = "Export GLTF"
     bl_options = {'REGISTER', 'UNDO'}
@@ -55,6 +56,7 @@ class ExportCustomPattern(bpy.types.Operator):
 
 class SimpleFileBrowserOperator(Operator):
     """Set filename to export on clicking 'Export GLTF' button"""
+
     bl_idname = "wm.file_selector"
     bl_label = "Select File"
 
@@ -73,6 +75,7 @@ class SimpleFileBrowserOperator(Operator):
 
 class CustomPropChecker(Operator):
     """Open Scene property panel"""
+
     bl_idname = "wm.open_scene_panel"
     bl_label = "Open Scene Panel"
 
@@ -84,6 +87,7 @@ class CustomPropChecker(Operator):
 
 class OBJECT_OT_set_export_target(bpy.types.Operator):
     """Set 'export target' custom property to every object"""
+
     bl_idname = "object.set_export_target"
     bl_label = "Initialize for Godot ready"
     bl_options = {'REGISTER', 'UNDO'}
@@ -108,6 +112,7 @@ class OBJECT_OT_set_export_target(bpy.types.Operator):
 
 class OBJECT_OT_make_colonly(bpy.types.Operator):
     """Mark current object as CollisionShape on imported by Godot"""
+
     bl_idname = "object.make_colonly"
     bl_label = "Toggle '-colonly'"
     bl_options = {'REGISTER', 'UNDO'}
@@ -117,7 +122,7 @@ class OBJECT_OT_make_colonly(bpy.types.Operator):
         postfix = '-colonly'
 
         if name.endswith(postfix):
-            bpy.context.active_object.name = name[:-len(postfix)]
+            bpy.context.active_object.name = name[: -len(postfix)]
         else:
             bpy.context.active_object.name = name + postfix
         self.report({'INFO'}, "Make colonly completed.")
@@ -127,6 +132,7 @@ class OBJECT_OT_make_colonly(bpy.types.Operator):
 
 class OBJECT_PT_godot_workflow_panel(bpy.types.Panel):
     """Creates a Panel in the Object mode toolbar"""
+
     bl_label = "Godot Workflow"
     bl_idname = "OBJECT_PT_godot_workflow_panel"
     bl_space_type = 'VIEW_3D'
@@ -285,7 +291,7 @@ def export_pattern1(filename):
         will_save_settings=False,
         export_hierarchy_full_collections=False,
         export_extra_animations=False,
-        filter_glob="*.glb"
+        filter_glob="*.glb",
     )
 
 
