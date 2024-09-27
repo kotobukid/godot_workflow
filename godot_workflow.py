@@ -12,6 +12,33 @@ from bpy.types import Panel, Operator
 from bpy.props import StringProperty
 
 
+class ObjectCursorArray(bpy.types.Operator):
+    """Object Cursor Array"""
+
+    bl_idname = "object.cursor_array"
+    bl_label = "Cursor Array"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    total: bpy.props.IntProperty(name="Steps", default=2, min=1, max=100)
+
+    def execute(self, context):
+        scene = context.scene
+        cursor = scene.cursor.location
+        obj = context.active_object
+
+        # total = 10
+        total = self.total
+
+        for i in range(total):
+            obj_new = obj.copy()
+            scene.collection.objects.link(obj_new)
+
+            factor = i / total
+            obj_new.location = (obj.location * factor) + (cursor * (1.0 - factor))
+
+        return {'FINISHED'}
+
+
 class ExportCustomPattern(bpy.types.Operator):
     """Export as GLTF format"""
 
@@ -142,6 +169,8 @@ class OBJECT_PT_godot_workflow_panel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene
+
         col = layout.column(align=True)
 
         row = col.row(align=True)
@@ -161,24 +190,45 @@ class OBJECT_PT_godot_workflow_panel(bpy.types.Panel):
         row = col.row(align=False)
         row.operator("export.custom_pattern", icon="EXPORT")
 
+        row = col.row()
+        row.label(text="機能実験")
+
+        row = col.row(align=True)
+        row.prop(scene, "my_addon_total")
+
+        row = col.row(align=True)
+        op = row.operator("object.cursor_array", icon="EMPTY_DATA")
+        op.total = scene.my_addon_total
+
+
+def menu_func(self, context):
+    self.layout.operator(ObjectCursorArray.bl_idname)
+
 
 # アドオンの登録
 def register():
+    bpy.types.Scene.my_addon_total = bpy.props.IntProperty(
+        name="Steps", description="Number of steps", default=2, min=1, max=100
+    )
     bpy.utils.register_class(ExportCustomPattern)
     bpy.utils.register_class(SimpleFileBrowserOperator)
     bpy.utils.register_class(CustomPropChecker)
     bpy.utils.register_class(OBJECT_OT_set_export_target)
     bpy.utils.register_class(OBJECT_OT_make_colonly)
+    bpy.utils.register_class(ObjectCursorArray)
+    bpy.types.VIEW3D_MT_object.append(menu_func)
     bpy.utils.register_class(OBJECT_PT_godot_workflow_panel)
 
 
 # アドオンの登録解除
 def unregister():
+    del bpy.types.Scene.my_addon_total
     bpy.utils.unregister_class(ExportCustomPattern)
     bpy.utils.unregister_class(SimpleFileBrowserOperator)
     bpy.utils.unregister_class(CustomPropChecker)
     bpy.utils.unregister_class(OBJECT_OT_set_export_target)
     bpy.utils.unregister_class(OBJECT_OT_make_colonly)
+    bpy.utils.unregister_class(ObjectCursorArray)
     bpy.utils.unregister_class(OBJECT_PT_godot_workflow_panel)
 
 
